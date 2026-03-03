@@ -1,0 +1,10 @@
+HW 8-1
+
+⚫ Use std::optional, std::variant, visit and
+overloaded to improve my implementation of
+future/promise on Canvas
+⚫ For extra credit, do it without locks
+⚫ You’ll have to learn about atomic versions of
+notifications
+⚫ See
+https://en.cppreference.com/w/cpp/atomic/atomic/notify_one

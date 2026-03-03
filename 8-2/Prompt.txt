@@ -1,0 +1,7 @@
+HW 8-2
+⚫ Choose a C++ program of your choice
+⚫ Could be something you wrote
+⚫ Or something on the web
+⚫ Examine it through the lens of the solid
+principles
+⚫ Report your conclusions
