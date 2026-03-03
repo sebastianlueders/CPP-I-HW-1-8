@@ -1,0 +1,83 @@
+SOURCE: https://www.geeksforgeeks.org/cpp/student-data-management-c/
+
+PROGRAM DESCRIPTION
+A basic student data management system that operates via command line and allows for 
+menu options to be chosen using standard input for several features including student
+login, updating grades and factulty/admin views of the database.
+
+||||||||||||||
+SOLID ANALYSIS
+||||||||||||||
+
+SINGLE RESPONSIBILITY PRINCIPLE (SRP)
+Almost everything in this program is placed within the main loop, including the menu loop, 
+command processing, conditional branching and file input/output operations. Therefore, one
+function is responsible for UI, management portal rule enforcement, and persistence. Changes
+to any of these would risk breaking the others.
+
+SUGGESTED MODIFICATINS:
+- Student/Record Model Class
+- Repository for File Persistence
+- UI/Menu layer for input/output
+- Services (e.g. GradingService, LoginService)
+
+
+OPEN/CLOSED PRINCIPLE (OCP)
+Program behavior is controlled by large if/else blocks on option and hard-coded strings like
+classnames and administrator password. Therefore, adding a new role, subject or operation 
+requires editing the existing main logic in multiple places.
+
+SUGGESTED MODIFICATIONS:
+- Replace option chain with a command map like std::map<int, Command *> or a function.
+- Store subjects and passwords in a data structure to avoid hard coding items like classnames
+
+
+LISKOV SUBSTITUTION PRINCIPLE (LSP)
+The program is largely procedural and does not define a subtype hierarchy. Therefore, LSP 
+is not directly applicable because substitutability requires polymorphism. Refactoring into 
+interfaces would make LSP analyzable.
+
+SUGGESTED MODIFICATIONS:
+- Refactor into base interfaces such as Storage, Command, UserRole, etc.    
+
+
+INTERFACE SEGREGATION PRINCIPLE (ISP)
+Although there aren't any explicit interfaces, the implicit interfaces are very noticeable.
+The main method assumes a lot about file layout, file locations within the directory, 
+fixed field widths and roles. It also uses hardcoded byte offsets with seekp for command
+number 3. Clearly, if any code were reliant on "storage" would be forced to depend on UI 
+assumptions and fixed-format logic.
+SUGGESTED MODIFICATIONS:
+- Introduce interfaces such as the following:
+    - StudentRepo { add/find/update/remove }
+    - Authenticator { login }
+- Seperate read operations (student/proctor/administrator) into seperate classes
+
+
+DEPENDENCY INVERSION PRINCIPLE (DIP)
+The program's logic is heavily reliant on low-level details, such as direct file paths,
+stream paths and file offsets. High-level policy such as managing student's grades
+depends on low-level storage details: the text file layout.
+
+SUGGESTED MODIFICATIONS:
+- Make high-level code depend on an abstraction:
+    - Storage/Repository
+    - Provide FileStudentRepo as one implementation
+    - Evantually modify the storage method via SQLStudentRepo without changing underlying logic
+
+
+MOST IMPORTANT DESIGN MODIFICATIONS
+The file update logic uses very low-level offsetting in order to locate, read and write
+data to the various files used. Unfortunately, this is a poor design because it creates a 
+dependency between the program's correctness and exact string lengths and formatting 
+assumptions. These arguments suggest that future designs should focus more on SRP and 
+DIP refactoring.
+
+
+CONCLUSION
+This program violates SRP by combining UI, business logic and persistence in a single method.
+It violates OCP because adding new features requires modifying long conditional chains and 
+hard-coded subject logic. DIP is violated because high-level student/grading operations 
+directly depend on low-level file layout and streaming operations, including fixed byte 
+offsets. Refactoring into services and repository interfaces would improve maintainability 
+and allow for dynamic alternatives for data storage.
